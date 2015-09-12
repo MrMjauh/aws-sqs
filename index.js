@@ -23,11 +23,11 @@ function SqsHelper(options, sqsInstance) {
     Hoek.assert(options !== undefined, new Error("options parameters should be passed"));
     // sqs queue properties
     if (!sqsInstance) {
-        Hoek.assert(options.sqs !== undefined, new Error("Missing options.sqs"));
-        Hoek.assert(options.sqs.region !== undefined, new Error("Missing options.sqs.region"));
-        Hoek.assert(options.sqs.accessKeyId !== undefined, new Error("Missing options.sqs.accessKeyId"));
-        Hoek.assert(options.sqs.secretAccessKey !== undefined, new Error("Missing options.sqs.secretAccessKey"));
-        Hoek.assert(options.sqs.params.QueueUrl !== undefined, new Error("Missing options.sqs.QueueUrl"));
+        Hoek.assert(options.aws !== undefined, new Error("options.aws parameters should be passed"));
+        Hoek.assert(options.aws.region !== undefined, new Error("Missing options.aws.region"));
+        Hoek.assert(options.aws.accessKeyId !== undefined, new Error("Missing options.aws.accessKeyId"));
+        Hoek.assert(options.aws.secretAccessKey !== undefined, new Error("Missing options.aws.secretAccessKey"));
+        Hoek.assert(options.aws.params.QueueUrl !== undefined, new Error("Missing options.aws.params.QueueUrl"));
     }
 
     // Check polling options
@@ -47,7 +47,7 @@ function SqsHelper(options, sqsInstance) {
     this.shouldPoll = false;
 
     // create new sqs from the options
-    this._sqs = sqsInstance || new AWS.SQS(options.sqs);
+    this._sqs = sqsInstance || new AWS.SQS(options.aws);
     EventEmitter.call(this);
 }
 

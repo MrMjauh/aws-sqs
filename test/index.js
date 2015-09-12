@@ -15,7 +15,7 @@ describe("Testing intialize of sqsQueue",function() {
     it("Throw err on creation with missing variables", function(done) {
         try {
             SQS.create({
-                sqs: {
+                aws: {
                     region: process.env.SQS_TEST_REGION,
                     accessKeyId: process.env.SQS_TEST_ACC_KEY,
                     //secretAccessKey: process.env.SQS_TEST_SECRET_KEY,
@@ -37,7 +37,7 @@ describe("Testing intialize of sqsQueue",function() {
     it("Create sqs queue",function(done) {
         try {
             sqsQ = SQS.create({
-                sqs: {
+                aws: {
                     region: process.env.SQS_TEST_REGION,
                     accessKeyId: process.env.SQS_TEST_ACC_KEY,
                     secretAccessKey: process.env.SQS_TEST_SECRET_KEY,
