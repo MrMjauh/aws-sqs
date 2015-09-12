@@ -150,7 +150,7 @@ describe("Purgin message",function() {
     })
 
     it("Wait for finding message",function(done) {
-        var timeoutTime = 5000;
+        var timeoutTime = 10000;
         this.timeout(timeoutTime*2);
         sqsQ.on("message_received",function(err,data) {
             return done("Should not get any message");
