@@ -40,7 +40,7 @@ function SqsHelper(options, sqsInstance) {
         // set options.poll.VisibilityTimeout if it is not already set
         options.poll.VisibilityTimeout = options.poll.VisibilityTimeout || internals.VISIBILITY_TIMEOUT.DEF_VAlUE;
         Hoek.assert(options.poll.WaitTimeSeconds !== undefined, new Error("Missing options.poll.WaitTimeSeconds parameter"));
-        Hoek.assert((options.poll.WaitTimeSeconds >= internals.WAIT_TIME_SECONDS.MIN && options.poll.WaitTimeSeconds <= internals.WAIT_TIME_SECONDS.MAX), new Error("options.poll.WaitTimeSeconds should be between " + internals.WAIT_TIME_SECONDS.MIN + "-" + internals.WAIT_TIME_SECONDS.MAX));
+        //Hoek.assert((options.poll.WaitTimeSeconds >= internals.WAIT_TIME_SECONDS.MIN && options.poll.WaitTimeSeconds <= internals.WAIT_TIME_SECONDS.MAX), new Error("options.poll.WaitTimeSeconds should be between " + internals.WAIT_TIME_SECONDS.MIN + "-" + internals.WAIT_TIME_SECONDS.MAX));
     }
 
     this.options = options;
@@ -61,7 +61,7 @@ SqsHelper.create = function (options) {
 
 SqsHelper.prototype.startPolling = function () {
     var self = this;
-    this.shouldPoll = true;
+    self.shouldPoll = true;
 
     async.whilst(
         function () {
