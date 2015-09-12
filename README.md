@@ -1,0 +1,1 @@
+Simple SQS wrapper for different publishing and subscribing

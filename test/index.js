@@ -77,10 +77,12 @@ describe("Get message",function() {
         sqsQ.on("message_received",function(err,data) {
             sqsQ.stopPolling();
             if (err) {
-                done(err);
+                sqsQ.removeAllListeners();
+                return done(err);
             } else {
                 messages = data;
-                done();
+                sqsQ.removeAllListeners();
+                return done();
             }
         })
         sqsQ.startPolling();
@@ -142,20 +144,35 @@ describe("Purgin message",function() {
     it("Purgin queue",function(done) {
         sqsQ.clearQueue(function(err,data) {
             if (err) {
-                done(err);
+                return done(err);
             } else {
-                done();
+                return done();
             }
         })
     })
 
     it("Wait for finding message",function(done) {
+        var foundError = false;
         var timeoutTime = 10000;
         this.timeout(timeoutTime*2);
+
         sqsQ.on("message_received",function(err,data) {
-            return done("Should not get any message");
+            if (err) {
+                foundError = true;
+                sqsQ.removeAllListeners();
+                return done(err);
+            } else {
+                if (data.Messages === undefined || data.Messages.length <= 0) {
+                    // all ok
+                } else {
+                    foundError = true;
+                    sqsQ.removeAllListeners();
+                    return done("Should not get any message ->" + JSON.stringify(data));
+                }
+            }
         });
+
         sqsQ.startPolling();
-        setTimeout(function(){done()}, timeoutTime);
+        setTimeout(function(){sqsQ.removeAllListeners();if (!foundError) {done()}}, timeoutTime);
     })
 })
