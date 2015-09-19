@@ -43,6 +43,8 @@ function SqsHelper(options, sqsInstance) {
         //Hoek.assert((options.poll.WaitTimeSeconds >= internals.WAIT_TIME_SECONDS.MIN && options.poll.WaitTimeSeconds <= internals.WAIT_TIME_SECONDS.MAX), new Error("options.poll.WaitTimeSeconds should be between " + internals.WAIT_TIME_SECONDS.MIN + "-" + internals.WAIT_TIME_SECONDS.MAX));
     }
 
+    this.reciveAttributes = options.reciveAttributes || {};
+
     this.options = options;
     this.shouldPoll = false;
 
@@ -59,7 +61,11 @@ SqsHelper.create = function (options) {
     return new SqsHelper(options);
 }
 
-SqsHelper.prototype.startPolling = function () {
+SqsHelper.prototype.startPolling = function (reciveAttributes) {
+    if (reciveAttributes !== undefined) {
+        this.reciveAttributes = reciveAttributes;
+    }
+
     var self = this;
     self.shouldPoll = true;
 
@@ -78,8 +84,8 @@ SqsHelper.prototype.startPolling = function () {
     )
 };
 
-SqsHelper.prototype.deleteMessage = function(message,cb) {
-    this._sqs.deleteMessage({ReceiptHandle : message.ReceiptHandle}, function (err, data) {
+SqsHelper.prototype.deleteMessage = function(receiptHandleId,cb) {
+    this._sqs.deleteMessage({ReceiptHandle : receiptHandleId}, function (err, data) {
         if (err) {
             return cb(err,null);
         } else {
@@ -94,7 +100,11 @@ SqsHelper.prototype.stopPolling = function () {
 
 SqsHelper.prototype._poll = function (cb) {
     var self = this;
-    this._sqs.receiveMessage(this.options.poll, function (err, data) {
+    this._sqs.receiveMessage({
+        MessageAttributeNames :  this.reciveAttributes,
+        VisibilityTimeout : this.options.VisibilityTimeout,
+        WaitTimeSeconds : this.options.WaitTimeSeconds
+    }, function (err, data) {
         var msgJson = {};
         if (err) {
             self.emit('message_received', err,null);
