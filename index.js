@@ -37,10 +37,8 @@ function SqsHelper(options, sqsInstance) {
             WaitTimeSeconds: internals.WAIT_TIME_SECONDS.MAX
         };
     } else {
-        // set options.poll.VisibilityTimeout if it is not already set
+        options.poll.WaitTimeSeconds =   options.poll.WaitTimeSeconds || 10;
         options.poll.VisibilityTimeout = options.poll.VisibilityTimeout || internals.VISIBILITY_TIMEOUT.DEF_VAlUE;
-        Hoek.assert(options.poll.WaitTimeSeconds !== undefined, new Error("Missing options.poll.WaitTimeSeconds parameter"));
-        //Hoek.assert((options.poll.WaitTimeSeconds >= internals.WAIT_TIME_SECONDS.MIN && options.poll.WaitTimeSeconds <= internals.WAIT_TIME_SECONDS.MAX), new Error("options.poll.WaitTimeSeconds should be between " + internals.WAIT_TIME_SECONDS.MIN + "-" + internals.WAIT_TIME_SECONDS.MAX));
     }
 
     this.reciveAttributes = options.reciveAttributes || {};
@@ -102,8 +100,8 @@ SqsHelper.prototype._poll = function (cb) {
     var self = this;
     this._sqs.receiveMessage({
         MessageAttributeNames :  this.reciveAttributes,
-        VisibilityTimeout : this.options.VisibilityTimeout,
-        WaitTimeSeconds : this.options.WaitTimeSeconds
+        VisibilityTimeout : this.options.poll.VisibilityTimeout,
+        WaitTimeSeconds : this.options.poll.WaitTimeSeconds
     }, function (err, data) {
         var msgJson = {};
         if (err) {
